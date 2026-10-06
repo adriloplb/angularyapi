@@ -1,15 +1,23 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Inicio - Gestión de Productos</ion-title>
+    <ion-title>Inicio - Nexus App</ion-title>
+    
+    <!-- Botón Conmutador de Modo Oscuro -->
+    <ion-buttons slot="end">
+      <ion-item lines="none" style="--background: transparent;">
+        <ion-icon [name]="isDarkMode ? 'moon-outline' : 'sunny-outline'" slot="start"></ion-icon>
+        <ion-toggle [checked]="isDarkMode" (ionChange)="toggleDarkMode($event)"></ion-toggle>
+      </ion-item>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <h1>Bienvenido a AngularyAPI</h1>
-  <p>Aplicación desarrollada con Ionic y Angular Standalone.</p>
+  <p>Consumo optimizado de servicios REST con arquitectura Angular Standalone.</p>
   
-  <div style="display: flex; gap: 15px; margin-top: 20px;">
-    <ion-button routerLink="/productos">Ver Productos</ion-button>
+  <div style="display: flex; gap: 15px; margin-top: 25px;">
+    <ion-button routerLink="/productos">Ver Productos (Dashboard)</ion-button>
     <ion-button routerLink="/about" color="secondary">Acerca de (About)</ion-button>
   </div>
 </ion-content>

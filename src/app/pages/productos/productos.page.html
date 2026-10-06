@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/inicio"></ion-back-button>
     </ion-buttons>
-    <ion-title>Productos</ion-title>
+    <ion-title>Dashboard de Productos</ion-title>
     <ion-buttons slot="end">
       <ion-button routerLink="/inicio" color="primary">Inicio</ion-button>
     </ion-buttons>
@@ -11,76 +11,109 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-    <h1>Catálogo de Productos</h1>
-    <ion-button routerLink="/inicio" size="small" fill="outline">Regresar a Inicio</ion-button>
+  <div class="dashboard-header">
+    <div>
+      <h1>Catálogo Interactivo</h1>
+      <p>Visualización avanzada de inventario y stock valorado</p>
+    </div>
+    <ion-button routerLink="/inicio" fill="outline" size="small">Regresar a Inicio</ion-button>
   </div>
 
   @if (loading) {
-    <div class="loading">
-      <ion-spinner></ion-spinner>
-      <p>Cargando productos...</p>
+    <div class="loading-container">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando datos desde DummyJSON...</p>
     </div>
   }
 
   @if (error) {
-    <ion-card>
+    <ion-card color="danger">
       <ion-card-header>
-        <ion-card-title>Error</ion-card-title>
+        <ion-card-title>Error de Conexión</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <p>{{ error }}</p>
-        <ion-button (click)="loadProducts()">Reintentar</ion-button>
+        <ion-button (click)="loadProducts()" fill="solid" color="light">Reintentar</ion-button>
       </ion-card-content>
     </ion-card>
   }
 
   @if (!loading && !error) {
-    <p>Mostrando productos (Página {{ currentPage }} de {{ totalPages }})</p>
-
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Producto</th>
-            <th>Categoría</th>
-            <th>Marca</th>
-            <th>Precio Unit.</th>
-            <th>Dimensiones (An x Al)</th>
-            <th>Stock</th>
-            <th>Stock Valorado</th>
-            <th>Valoración</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (product of products; track product.id) {
-            <tr>
-              <td>{{ product.id }}</td>
-              <td>
-                <div class="product">
-                  <img [src]="product.thumbnail" [alt]="product.title">
-                  <span>{{ product.title }}</span>
-                </div>
-              </td>
-              <td>{{ product.category }}</td>
-              <td>{{ product.brand || 'Sin marca' }}</td>
-              <td>{{ product.price | currency: 'EUR' }}</td>
-              <td>{{ product.dimensions?.width }}cm x {{ product.dimensions?.height }}cm</td>
-              <td>{{ product.stock }}</td>
-              <td>{{ calcularStockValorado(product) | currency: 'EUR' }}</td>
-              <td>⭐ {{ product.rating }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <div class="pagination-info">
+      <ion-chip color="secondary">
+        Página {{ currentPage }} de {{ totalPages }} (Total: {{ total }} ítems)
+      </ion-chip>
     </div>
 
-    <!-- Controles de Paginación -->
-    <div style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 25px;">
-      <ion-button (click)="paginaAnterior()" [disabled]="skip === 0">Anterior</ion-button>
-      <span>Página {{ currentPage }} / {{ totalPages }}</span>
-      <ion-button (click)="siguientePagina()" [disabled]="skip + limit >= total">Siguiente</ion-button>
+    <!-- Grid Responsivo de Tarjetas -->
+    <ion-grid>
+      <ion-row>
+        @for (product of products; track product.id) {
+          <ion-col size="12" size-md="6" size-lg="4">
+            <ion-card class="product-card">
+              <div class="card-image-container">
+                <img [src]="product.thumbnail" [alt]="product.title" class="product-image" />
+                <ion-badge color="tertiary" class="category-badge">{{ product.category }}</ion-badge>
+                <ion-badge color="warning" class="rating-badge">
+                  <ion-icon name="star"></ion-icon> {{ product.rating }}
+                </ion-badge>
+              </div>
+
+              <ion-card-header>
+                <ion-card-subtitle>{{ product.brand || 'Marca General' }} | ID: #{{ product.id }}</ion-card-subtitle>
+                <ion-card-title>{{ product.title }}</ion-card-title>
+              </ion-card-header>
+
+              <ion-card-content>
+                <div class="price-row">
+                  <span class="price-tag">{{ product.price | currency:'EUR' }}</span>
+                  <span class="discount-tag">-{{ product.discountPercentage }}% Dto.</span>
+                </div>
+
+                <div class="metrics-grid">
+                  <!-- Dimensiones Ancho x Alto -->
+                  <div class="metric-box">
+                    <ion-icon name="resize-outline"></ion-icon>
+                    <div>
+                      <small>Dimensiones</small>
+                      <strong>{{ product.dimensions?.width }} x {{ product.dimensions?.height }} cm</strong>
+                    </div>
+                  </div>
+
+                  <!-- Stock Disponible -->
+                  <div class="metric-box">
+                    <ion-icon name="cube-outline"></ion-icon>
+                    <div>
+                      <small>Stock Unidades</small>
+                      <strong>{{ product.stock }} ud.</strong>
+                    </div>
+                  </div>
+
+                  <!-- Total Stock Valorado -->
+                  <div class="metric-box full-width highlight">
+                    <ion-icon name="cash-outline"></ion-icon>
+                    <div>
+                      <small>Stock Valorado Total</small>
+                      <strong>{{ calcularStockValorado(product) | currency:'EUR' }}</strong>
+                    </div>
+                  </div>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        }
+      </ion-row>
+    </ion-grid>
+
+    <!-- Paginación Inferior -->
+    <div class="pagination-controls">
+      <ion-button (click)="paginaAnterior()" [disabled]="skip === 0" fill="solid">
+        Anterior
+      </ion-button>
+      <span class="page-indicator">Página {{ currentPage }} / {{ totalPages }}</span>
+      <ion-button (click)="siguientePagina()" [disabled]="skip + limit >= total" fill="solid">
+        Siguiente
+      </ion-button>
     </div>
   }
 </ion-content>
