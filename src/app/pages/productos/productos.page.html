@@ -66,7 +66,7 @@
               <td>{{ product.category }}</td>
               <td>{{ product.brand || 'Sin marca' }}</td>
               <td>{{ product.price | currency: 'EUR' }}</td>
-              <td>{{ product.dimensions.width }}cm x {{ product.dimensions.height }}cm</td>
+              <td>{{ product.dimensions?.width }}cm x {{ product.dimensions?.height }}cm</td>
               <td>{{ product.stock }}</td>
               <td>{{ calcularStockValorado(product) | currency: 'EUR' }}</td>
               <td>⭐ {{ product.rating }}</td>

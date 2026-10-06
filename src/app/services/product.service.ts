@@ -8,7 +8,7 @@ import { ProductsResponse } from '../models/product.model';
 })
 export class ProductService {
   private http = inject(HttpClient);
-  private apiUrl = '[https://dummyjson.com/products](https://dummyjson.com/products)';
+  private apiUrl = 'https://dummyjson.com/products';
 
   // Método que soporta paginación mediante query params de la API
   getProducts(limit: number = 10, skip: number = 0): Observable<ProductsResponse> {

@@ -49,7 +49,8 @@ export class ProductosPage implements OnInit {
 
   // Cálculo del Stock Valorado: unidades * precio - descuento aplicable
   calcularStockValorado(product: Product): number {
-    const precioConDescuento = product.price * (1 - product.discountPercentage / 100);
+    const discount = product.discountPercentage ?? 0;
+    const precioConDescuento = product.price * (1 - discount / 100);
     return Math.round(product.stock * precioConDescuento * 100) / 100;
   }
 

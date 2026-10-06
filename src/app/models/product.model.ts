@@ -15,7 +15,7 @@ export interface Product {
   stock: number;
   brand: string;
   thumbnail: string;
-  dimensions: Dimensions;
+  dimensions?: Dimensions;
 }
 
 export interface ProductsResponse {
